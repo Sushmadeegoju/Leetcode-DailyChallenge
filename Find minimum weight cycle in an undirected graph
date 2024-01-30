@@ -1,0 +1,53 @@
+// Basic Idea: Traversing all the edges, for each edge:
+//                - Removing an edge and finding the minimum distance from edge[0] to edge[1]. 
+//                - Then adding the removed edge weight to form a potential cycle.
+class FindMinimumCycle {
+public:
+     int shortest_path(vector<vector<pair<int, int>>> adjList, int src, int dst) {
+          vector<int> dist(adjList.size()+1, INT_MAX);
+
+          priority_queue<pair<int, int>> pq;
+          pq.push({0, src});
+
+          while(!pq.empty()) {
+               int u = pq.top().second;
+               int d = pq.top().first;
+               pq.pop();
+
+               for(auto neighbor: adjList[u]) {
+                    int v = neighbor.first;
+                    int w = neighbor.second;
+
+                    if((u == src && v == dst) || (u == dst && v == src)) continue;
+
+                    if(d + w < dist[v]) {
+                         dist[v] = d + w;
+                         pq.push({dist[v], v});
+                    }
+               }
+          }
+          return dist[dst];
+     }
+
+     int solve(vector<vector<int>> input) {
+         int maxNode = 0;
+
+        // Find the maximum node value in the input
+        for (auto edge : input) {
+            maxNode = max(maxNode, max(edge[0], edge[1]));
+        }
+
+          vector<vector<pair<int, int>>> adjList(maxNode + 1);
+          for(auto edge:input) {
+               adjList[edge[0]].push_back({edge[1], edge[2]});
+               adjList[edge[1]].push_back({edge[0], edge[2]});
+          }
+          int ans = INT_MAX;
+          for(auto edge:input) {
+               int path = shortest_path(adjList, edge[0], edge[1]) + edge[2];
+               ans = min(ans, path);
+          }
+
+          return ans;
+     }
+};
