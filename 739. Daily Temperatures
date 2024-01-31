@@ -1,0 +1,26 @@
+// Basic Idea: We will use a stack to implement the solution. 
+// There are two cases: 
+// If temperatures[i] >= temperatures[st.top()] i.e.,  for all the temperatures before i, temperatures[i] might be the warmer temperature. 
+// So we pop st.top() until temperatures[i] < temperatures[st.top()], Then push temperatures[i] onto the stack;
+// Else, we push temperatures[i] onto the stack because it could be the warmer temperature for the temperatures before i;
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temperatures) {
+        int n = temperatures.size();
+        stack<int> st;
+        vector<int> ans(n,0);
+        st.push(n-1);
+
+        for(int i=n-2; i>=0; i--) {
+            while(!st.empty() && temperatures[i] >= temperatures[st.top()]) {
+                st.pop();
+            }
+            if(!st.empty()) {
+                ans[i] = st.top() - i;
+            }
+            st.push(i);
+        }
+        return ans;
+    }
+};
